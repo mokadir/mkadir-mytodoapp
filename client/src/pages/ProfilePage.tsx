@@ -130,8 +130,8 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-pulse text-gray-400">Loading profile...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">Loading profile...</div>
       </div>
     );
   }
@@ -143,34 +143,37 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       {/* ─── Navbar ─────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 transition-colors duration-200">
+        <div className="max-w-3xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={onBack}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h1 className="text-lg font-bold text-gray-900">Profile</h1>
+            <h1 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Profile</h1>
           </div>
 
           <button
             onClick={logout}
-            className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+            className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 font-medium transition-colors px-2 sm:px-3 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
           >
-            Sign out
+            <span className="hidden sm:inline">Sign out</span>
+            <svg className="w-4 h-4 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
           </button>
         </div>
       </header>
 
-      <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8">
+      <main className="flex-1 max-w-3xl mx-auto w-full px-3 sm:px-6 py-4 sm:py-8">
         {/* ─── Navigation Tabs ──────────────────────────────────── */}
-        <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1 mb-6 overflow-x-auto">
+        <div className="flex items-center gap-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-1 mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
           {([
             { key: "overview", label: "Overview" },
             { key: "edit", label: "Edit Profile" },
@@ -180,10 +183,10 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
             <button
               key={tab.key}
               onClick={() => setView(tab.key)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-150 whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all duration-150 whitespace-nowrap ${
                 view === tab.key
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
               {tab.label}
@@ -195,44 +198,44 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
         {view === "overview" && profile && (
           <div className="space-y-6">
             {/* Profile Card */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
               <div className="flex items-center gap-4 mb-6">
                 {/* Avatar */}
                 <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                   {(profile.name || profile.email)[0].toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                     {profile.name || "Unnamed User"}
                   </h2>
-                  <p className="text-sm text-gray-500">{profile.email}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{profile.email}</p>
                   {profile.bio && (
-                    <p className="text-sm text-gray-400 mt-1">{profile.bio}</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{profile.bio}</p>
                   )}
                 </div>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{profile._count.todos}</div>
-                  <div className="text-xs text-gray-400 mt-1">Todos</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{profile._count.todos}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Todos</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{profile._count.projects}</div>
-                  <div className="text-xs text-gray-400 mt-1">Projects</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{profile._count.projects}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Projects</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{profile._count.tags}</div>
-                  <div className="text-xs text-gray-400 mt-1">Tags</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{profile._count.tags}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Tags</div>
                 </div>
               </div>
             </div>
 
             {/* Subscription Card */}
             {subscription && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Subscription</h3>
+              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Subscription</h3>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
@@ -253,12 +256,12 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
             )}
 
             {/* Account Info */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Account</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Account</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Member since</span>
-                  <span className="text-gray-700">
+                  <span className="text-gray-400 dark:text-gray-500">Member since</span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     {new Date(profile.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -267,8 +270,8 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Last updated</span>
-                  <span className="text-gray-700">
+                  <span className="text-gray-400 dark:text-gray-500">Last updated</span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     {new Date(profile.updatedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -283,41 +286,41 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
 
         {/* ─── Edit Profile ─────────────────────────────────────── */}
         {view === "edit" && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Edit Profile</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Edit Profile</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
                 <input
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-gray-200"
                   placeholder="Your name"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bio</label>
                 <textarea
                   value={editBio}
                   onChange={(e) => setEditBio(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none dark:bg-gray-700 dark:text-gray-200"
                   placeholder="A short bio about yourself..."
                   maxLength={500}
                 />
-                <p className="text-xs text-gray-400 mt-1">{editBio.length}/500</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{editBio.length}/500</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Avatar URL</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Avatar URL</label>
                 <input
                   type="url"
                   value={editAvatarUrl}
                   onChange={(e) => setEditAvatarUrl(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-gray-200"
                   placeholder="https://example.com/avatar.jpg"
                 />
               </div>
@@ -330,7 +333,7 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
                     setEditAvatarUrl(profile?.avatarUrl || "");
                     setView("overview");
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   Cancel
                 </button>
@@ -348,42 +351,42 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
 
         {/* ─── Change Password ──────────────────────────────────── */}
         {view === "password" && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Change Password</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Change Password</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
                 <input
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Password</label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm New Password</label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
 
               {passwordError && (
-                <p className="text-sm text-red-600">{passwordError}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>
               )}
 
               <div className="flex gap-3 pt-2">
@@ -395,7 +398,7 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
                     setPasswordError("");
                     setView("overview");
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   Cancel
                 </button>
@@ -416,8 +419,8 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
           <div className="space-y-6">
             {/* Current Plan */}
             {subscription && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">Current Plan</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Current Plan</h2>
 
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -426,7 +429,7 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
                     >
                       {subscription.plan}
                     </span>
-                    <span className="ml-2 text-sm text-gray-500 capitalize">{subscription.status}</span>
+                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 capitalize">{subscription.status}</span>
                   </div>
                 </div>
 
@@ -443,18 +446,18 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
             )}
 
             {/* Available Plans */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Available Plans</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 transition-colors duration-200">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Available Plans</h2>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 {/* Free Plan */}
                 <div className={`rounded-xl border-2 p-5 ${
-                  subscription?.plan === "free" ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                  subscription?.plan === "free" ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-600"
                 }`}>
-                  <h3 className="text-lg font-bold text-gray-900">Free</h3>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">$0</p>
-                  <p className="text-sm text-gray-500 mt-1">/month</p>
-                  <ul className="mt-4 space-y-2 text-sm text-gray-600">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Free</h3>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">$0</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">/month</p>
+                  <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                     <li className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -481,12 +484,12 @@ export function ProfilePage({ onBack }: { onBack: () => void }) {
 
                 {/* Pro Plan */}
                 <div className={`rounded-xl border-2 p-5 ${
-                  subscription?.plan === "pro" ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                  subscription?.plan === "pro" ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-600"
                 }`}>
-                  <h3 className="text-lg font-bold text-gray-900">Pro</h3>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">$9</p>
-                  <p className="text-sm text-gray-500 mt-1">/month</p>
-                  <ul className="mt-4 space-y-2 text-sm text-gray-600">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Pro</h3>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">$9</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">/month</p>
+                  <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                     <li className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

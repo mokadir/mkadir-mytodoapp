@@ -87,8 +87,8 @@ export function TodoCard({ todo, onToggle, onDelete, onUpdate, dragHandle }: Tod
 
   return (
     <div
-      className={`group bg-white rounded-xl border shadow-sm transition-all duration-200 hover:shadow-md ${
-        todo.completed ? "border-green-200 bg-green-50/30" : "border-gray-200"
+      className={`group bg-white dark:bg-gray-800 rounded-xl border shadow-sm transition-all duration-200 hover:shadow-md ${
+        todo.completed ? "border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-900/20" : "border-gray-200 dark:border-gray-700"
       }`}
     >
       <div className="p-4 flex items-start gap-3">
@@ -149,8 +149,8 @@ export function TodoCard({ todo, onToggle, onDelete, onUpdate, dragHandle }: Tod
                 onClick={handleStartEdit}
                 className={`text-sm font-medium transition-all duration-200 cursor-pointer hover:text-blue-600 ${
                   todo.completed
-                    ? "line-through text-gray-400"
-                    : "text-gray-900"
+                    ? "line-through text-gray-400 dark:text-gray-500"
+                    : "text-gray-900 dark:text-white"
                 }`}
                 title={todo.completed ? "" : "Click to edit"}
               >
@@ -192,7 +192,7 @@ export function TodoCard({ todo, onToggle, onDelete, onUpdate, dragHandle }: Tod
               className={`mt-1 text-xs flex items-center gap-1 ${
                 !todo.completed && isOverdue(todo.dueDate)
                   ? "text-red-500 font-medium"
-                  : "text-gray-400"
+                  : "text-gray-400 dark:text-gray-500"
               }`}
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -204,10 +204,10 @@ export function TodoCard({ todo, onToggle, onDelete, onUpdate, dragHandle }: Tod
           )}
         </div>
 
-        {/* Delete Button */}
+        {/* Delete Button - always visible on mobile, hover on desktop */}
         <button
           onClick={() => onDelete(todo.id)}
-          className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-200 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50"
+          className="flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50"
           title="Delete todo"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

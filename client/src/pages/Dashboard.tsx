@@ -14,6 +14,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { todosApi, type Todo, type Tag } from "../lib/todos";
 import { projectsApi, type Project } from "../lib/projects";
 import { SortableTodoCard } from "../components/SortableTodoCard";
@@ -21,6 +22,7 @@ import { AddTodoForm } from "../components/AddTodoForm";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { useToast } from "../components/Toast";
 import { ProfilePage } from "./ProfilePage";
+
 
 type FilterType = "all" | "active" | "completed";
 
@@ -50,7 +52,9 @@ const PROJECT_COLORS = [
 
 export function Dashboard() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const { showToast } = useToast();
+
   const [showProfile, setShowProfile] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -316,36 +320,58 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       {/* ─── Navbar ─────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 transition-colors duration-200">
+        <div className="max-w-3xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
             </div>
-            <h1 className="text-lg font-bold text-gray-900">Todo App</h1>
+            <h1 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white truncate">Todo App</h1>
+
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="text-xs sm:text-sm text-gray-500 hover:text-amber-500 font-medium transition-colors px-2 sm:px-3 py-1.5 rounded-lg hover:bg-amber-50"
+              title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            >
+              {theme === "light" ? (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+            </button>
             <button
               onClick={() => setShowProfile(true)}
-              className="text-sm text-gray-500 hover:text-blue-600 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-blue-50 flex items-center gap-1.5"
+              className="text-xs sm:text-sm text-gray-500 hover:text-blue-600 font-medium transition-colors px-2 sm:px-3 py-1.5 rounded-lg hover:bg-blue-50 flex items-center gap-1 sm:gap-1.5 max-w-[140px] sm:max-w-[200px]"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              {user?.name || user?.email}
+              <span className="truncate hidden sm:inline">{user?.name || user?.email}</span>
+              <span className="truncate sm:hidden">{user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Profile'}</span>
             </button>
             <button
               onClick={logout}
-              className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50"
+              className="text-xs sm:text-sm text-gray-500 hover:text-red-600 font-medium transition-colors px-2 sm:px-3 py-1.5 rounded-lg hover:bg-red-50"
             >
-              Sign out
+              <span className="hidden sm:inline">Sign out</span>
+              <svg className="w-4 h-4 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
             </button>
           </div>
+
         </div>
       </header>
 
@@ -357,8 +383,8 @@ export function Dashboard() {
             onClick={() => setSelectedProjectId(null)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap ${
               selectedProjectId === null
-                ? "bg-gray-800 text-white shadow-sm"
-                : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"
+                ? "bg-gray-800 dark:bg-gray-700 text-white shadow-sm"
+                : "bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
             }`}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -373,7 +399,7 @@ export function Dashboard() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap ${
                 selectedProjectId === project.id
                   ? "text-white shadow-sm"
-                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"
+                  : "bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
               style={
                 selectedProjectId === project.id
@@ -391,7 +417,7 @@ export function Dashboard() {
           ))}
           <button
             onClick={() => setShowProjectManager(true)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-dashed border-gray-300 transition-colors whitespace-nowrap"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-400 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-dashed border-gray-300 dark:border-gray-700 transition-colors whitespace-nowrap"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -400,12 +426,13 @@ export function Dashboard() {
           </button>
         </div>
 
+
         {/* Add Todo Form */}
         <AddTodoForm onAdd={handleAdd} tags={tags} />
 
         {/* Error Banner */}
         {error && (
-          <div className="bg-red-50 text-red-600 rounded-xl p-4 text-sm border border-red-200">
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl p-4 text-sm border border-red-200 dark:border-red-800">
             {error}
             <button onClick={fetchTodos} className="ml-2 underline hover:no-underline">
               Retry
@@ -414,16 +441,16 @@ export function Dashboard() {
         )}
 
         {/* ─── Filter & Stats Bar ───────────────────────────────── */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-1 self-start">
             {(["all", "active", "completed"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-150 ${
                   filter === f
                     ? "bg-blue-600 text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
               >
                 {f === "all" ? "All" : f === "active" ? "Active" : "Completed"}
@@ -431,19 +458,20 @@ export function Dashboard() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-400">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 whitespace-nowrap">
               {activeCount} active, {completedCount} completed
             </span>
             {/* Tag Manager Button */}
             <button
               onClick={() => setShowTagManager(true)}
-              className="text-sm text-gray-400 hover:text-blue-600 font-medium transition-colors flex items-center gap-1"
+              className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors flex items-center gap-1"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
-              Manage Tags
+              <span className="hidden sm:inline">Manage Tags</span>
+              <span className="sm:hidden">Tags</span>
             </button>
           </div>
         </div>
@@ -451,7 +479,7 @@ export function Dashboard() {
         {/* ─── Search Bar ────────────────────────────────────────── */}
         <div className="relative">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -465,7 +493,7 @@ export function Dashboard() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search todos by title..."
-            className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            className="w-full pl-10 pr-10 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:text-gray-200 dark:placeholder-gray-500"
           />
           {searchQuery && (
             <button
@@ -473,7 +501,7 @@ export function Dashboard() {
                 setSearchQuery("");
                 searchInputRef.current?.focus();
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -488,20 +516,20 @@ export function Dashboard() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl border border-gray-200 p-4 animate-pulse"
+                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 animate-pulse"
               >
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
               </div>
             ))}
           </div>
         ) : filteredTodos.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <p className="text-gray-500 font-medium">
+            <p className="text-gray-500 dark:text-gray-400 font-medium">
               {searchQuery.trim()
                 ? `No todos match "${searchQuery.trim()}"`
                 : filter === "all"
@@ -511,6 +539,7 @@ export function Dashboard() {
                 : "No completed todos yet."}
             </p>
           </div>
+
         ) : (
           <DndContext
             sensors={sensors}
@@ -556,13 +585,14 @@ export function Dashboard() {
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setShowTagManager(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-xl border border-gray-200 w-full max-w-md animate-fadeIn">
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md animate-fadeIn">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900">Manage Tags</h2>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Manage Tags</h2>
                 <button
                   onClick={() => setShowTagManager(false)}
-                  className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                  className="p-1 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -618,14 +648,14 @@ export function Dashboard() {
                   {tags.map((tag) => (
                     <div
                       key={tag.id}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <div
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: tag.color }}
                         />
-                        <span className="text-sm font-medium text-gray-700">{tag.name}</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{tag.name}</span>
                       </div>
                       <button
                         onClick={() => setTagDeleteTarget(tag.id)}
@@ -663,13 +693,13 @@ export function Dashboard() {
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setShowProjectManager(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-xl border border-gray-200 w-full max-w-md animate-fadeIn">
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md animate-fadeIn">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900">Manage Projects</h2>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Manage Projects</h2>
                 <button
                   onClick={() => setShowProjectManager(false)}
-                  className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                  className="p-1 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -725,15 +755,15 @@ export function Dashboard() {
                   {projects.map((project) => (
                     <div
                       key={project.id}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <div
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: project.color }}
                         />
-                        <span className="text-sm font-medium text-gray-700">{project.name}</span>
-                        <span className="text-xs text-gray-400">({project._count.todos})</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{project.name}</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">({project._count.todos})</span>
                       </div>
                       <button
                         onClick={() => setProjectDeleteTarget(project.id)}

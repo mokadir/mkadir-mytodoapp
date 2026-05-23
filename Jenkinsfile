@@ -197,7 +197,7 @@ EOF
                     def tarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}.tar"
 
                     try {
-                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName}"
+                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile Dockerfile --destination ${imageName}"
 
                         if (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) {
                             def latestTag = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest"
