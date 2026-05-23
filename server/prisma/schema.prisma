@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User Model ───────────────────────────────────────────────────────────────
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  bio       String?  @default("")
+  avatarUrl String?  @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  todos         Todo[]
+  tags          Tag[]
+  projects      Project[]
+  refreshTokens RefreshToken[]
+  subscription  Subscription?
+}
+
+// ─── Project / Board Model (Multi-list support) ──────────────────────────────
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#3B82F6") // hex color for UI display
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos     Todo[]
+
+  @@unique([name, userId])
+}
+
+// ─── Todo Model ───────────────────────────────────────────────────────────────
+model Todo {
+  id        String    @id @default(cuid())
+  title     String
+  completed Boolean   @default(false)
+  priority  String    @default("medium") // low, medium, high
+  dueDate   DateTime?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  tags      Tag[]
+}
+
+// ─── Tag Model ────────────────────────────────────────────────────────────────
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#3B82F6") // hex color for UI display
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos     Todo[]
+
+  @@unique([name, userId])
+}
+
+// ─── Refresh Token Model (for JWT refresh token rotation) ────────────────────
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Subscription Model (Stripe-ready) ────────────────────────────────────────
+model Subscription {
+  id            String   @id @default(cuid())
+  plan          String   @default("free") // free, pro, enterprise
+  status        String   @default("active") // active, inactive, canceled, past_due, trialing
+  stripeCustomerId String? // Stripe customer ID
+  stripeSubscriptionId String? // Stripe subscription ID
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  trialEndsAt        DateTime?
+  canceledAt         DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

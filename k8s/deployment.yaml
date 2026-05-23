@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: ns-mytodoapp
+  name: todoapp-deployment
+  labels:
+    app: todoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-cred
+      containers:
+        - name: todoapp-container
+          image: mokadir/todoapp:1
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "5000"
+            - name: DATABASE_URL
+              value: "file:./data/dev.db"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: todoapp-secrets
+                  key: jwt-secret
+            - name: JWT_ACCESS_EXPIRES_IN
+              value: "15m"
+            - name: JWT_REFRESH_EXPIRES_IN
+              value: "7d"
+            - name: CORS_ORIGIN
+              value: "http://localhost:30023"
+            - name: RATE_LIMIT_WINDOW_MS
+              value: "900000"
+            - name: RATE_LIMIT_MAX_AUTH
+              value: "10"
+            - name: RATE_LIMIT_MAX_GENERAL
+              value: "100"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: todoapp-data
+              mountPath: /app/server/prisma/data
+      volumes:
+        - name: todoapp-data
+          persistentVolumeClaim:
+            claimName: todoapp-pvc
