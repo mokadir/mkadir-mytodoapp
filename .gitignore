@@ -28,7 +28,6 @@ npm-debug.log*
 server/prisma/dev.db
 server/prisma/dev.db-journal
 
-# Docker
-Dockerfile
+# Docker ignore files (but NOT the Dockerfile itself)
 .dockerignore
 
