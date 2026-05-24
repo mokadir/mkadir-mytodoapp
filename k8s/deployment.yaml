@@ -32,7 +32,7 @@ spec:
               mountPath: /app/server/prisma/data
       containers:
         - name: todoapp-container
-          image: mokadir/todoapp:13
+          image: mokadir/todoapp:15
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
