@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import path from "path";
+import { execSync } from "child_process";
 import { config } from "./config";
 import { errorHandler } from "./middleware/errorHandler";
 import routes from "./routes";
@@ -65,9 +67,42 @@ app.use((_req, res) => {
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 app.use(errorHandler);
 
+// ─── Database Migration ───────────────────────────────────────────────────────
+async function runMigrations() {
+  // __dirname is server/dist/ after compilation, so server root is one level up
+  const serverRoot = path.resolve(__dirname, "..");
+  const prismaCli = path.resolve(serverRoot, "node_modules", ".bin", "prisma");
+
+  try {
+    console.log("Running database migrations...");
+    execSync(`"${prismaCli}" migrate deploy`, {
+      cwd: serverRoot,
+      stdio: "inherit",
+      env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
+    });
+    console.log("Database migrations completed successfully");
+  } catch (error) {
+    console.error("Migration failed, attempting db push as fallback:", error);
+    try {
+      execSync(`"${prismaCli}" db push --accept-data-loss`, {
+        cwd: serverRoot,
+        stdio: "inherit",
+        env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
+      });
+      console.log("Database push completed");
+    } catch (pushError) {
+      console.error("Database initialization failed:", pushError);
+      process.exit(1);
+    }
+  }
+}
+
 // ─── Start Server ─────────────────────────────────────────────────────────────
-app.listen(config.port, () => {
-  console.log(`
+async function start() {
+  await runMigrations();
+
+  app.listen(config.port, () => {
+    console.log(`
   ╔══════════════════════════════════════════════╗
   ║  Todo App API Server                         ║
   ║  ─────────────────────────────               ║
@@ -75,7 +110,10 @@ app.listen(config.port, () => {
   ║  Env:     ${config.nodeEnv.padEnd(33)}║
   ║  Health:  http://localhost:${config.port}/api/health  ║
   ╚══════════════════════════════════════════════╝
-  `);
-});
+    `);
+  });
+}
+
+start();
 
 export default app;

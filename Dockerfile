@@ -43,7 +43,10 @@ COPY --from=client-build /app/client/dist ./client/dist
 
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN chown -R appuser:appgroup /app
+
+# Create data directory for SQLite database and set permissions
+RUN mkdir -p /app/server/prisma/data && chown -R appuser:appgroup /app
+
 USER appuser
 
 # Environment
