@@ -16,7 +16,21 @@ app.set("trust proxy", config.isProduction ? 1 : 0);
 // ─── Security Headers (Helmet) ─────────────────────────────────────────────────
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Disable CSP to allow Vite-bundled scripts
+    contentSecurityPolicy: config.isProduction
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'none'"],
+          },
+        }
+      : false,
     crossOriginEmbedderPolicy: false,
   })
 );
