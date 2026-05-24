@@ -32,7 +32,7 @@ spec:
               mountPath: /app/server/prisma/data
       containers:
         - name: todoapp-container
-          image: mokadir/todoapp:12
+          image: mokadir/todoapp:13
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -53,7 +53,7 @@ spec:
             - name: JWT_REFRESH_EXPIRES_IN
               value: "7d"
             - name: CORS_ORIGIN
-              value: "http://localhost:30023"
+              value: "http://192.168.2.236:30023"
             - name: RATE_LIMIT_WINDOW_MS
               value: "900000"
             - name: RATE_LIMIT_MAX_AUTH
