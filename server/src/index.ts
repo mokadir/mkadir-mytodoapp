@@ -56,8 +56,19 @@ const generalLimiter = rateLimit({
 
 app.use("/api", generalLimiter);
 
-// ─── Routes ────────────────────────────────────────────────────────────────────
+// ─── API Routes ────────────────────────────────────────────────────────────────
 app.use("/api", routes);
+
+// ─── Serve Client Static Files (in production) ────────────────────────────────
+if (config.isProduction) {
+  const clientDist = path.resolve(__dirname, "..", "..", "client", "dist");
+  app.use(express.static(clientDist));
+
+  // SPA fallback: serve index.html for all non-API routes
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(clientDist, "index.html"));
+  });
+}
 
 // ─── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {
