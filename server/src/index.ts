@@ -72,6 +72,17 @@ async function runMigrations() {
   // __dirname is server/dist/ after compilation, so server root is one level up
   const serverRoot = path.resolve(__dirname, "..");
   const prismaCli = path.resolve(serverRoot, "node_modules", ".bin", "prisma");
+  const dataDir = path.resolve(serverRoot, "prisma", "data");
+
+  // Ensure the data directory exists with proper permissions
+  try {
+    const { mkdirSync } = await import("fs");
+    mkdirSync(dataDir, { recursive: true, mode: 0o755 });
+    console.log(`Data directory ensured at: ${dataDir}`);
+  } catch (dirError) {
+    console.error("Failed to create data directory:", dirError);
+    process.exit(1);
+  }
 
   try {
     console.log("Running database migrations...");
