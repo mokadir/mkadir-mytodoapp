@@ -33,6 +33,7 @@ spec:
       containers:
         - name: todoapp-container
           image: mokadir/todoapp:10
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:

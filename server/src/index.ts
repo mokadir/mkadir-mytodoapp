@@ -59,6 +59,11 @@ app.use(
 app.use(express.json({ limit: "10kb" })); // Limit body size
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
+// ─── Health Check (Exempt from Rate Limiting) ──────────────────────────────────
+// Register health check BEFORE rate limiter so K8s probes don't get blocked
+import healthRouter from "./routes/health";
+app.use("/api/health", healthRouter);
+
 // ─── General Rate Limiter ──────────────────────────────────────────────────────
 const generalLimiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
@@ -70,7 +75,7 @@ const generalLimiter = rateLimit({
 
 app.use("/api", generalLimiter);
 
-// ─── API Routes ────────────────────────────────────────────────────────────────
+// ─── API Routes (Rate Limited) ─────────────────────────────────────────────────
 app.use("/api", routes);
 
 // ─── Serve Client Static Files (in production) ────────────────────────────────
