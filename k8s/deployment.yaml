@@ -19,7 +19,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: todoapp-container
-          image: mokadir/todoapp:4
+          image: mokadir/todoapp:5
           ports:
             - containerPort: 5000
           env:
