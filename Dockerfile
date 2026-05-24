@@ -41,8 +41,8 @@ COPY --from=server-build /app/server/prisma ./server/prisma
 # Copy client build
 COPY --from=client-build /app/client/dist ./client/dist
 
-# Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Create non-root user with fixed UID 1000 (matches hostPath PV ownership)
+RUN addgroup -S -g 1000 appgroup && adduser -S -u 1000 -G appgroup appuser
 
 # Create data directory for SQLite database and set permissions
 RUN mkdir -p /app/server/prisma/data && chown -R appuser:appgroup /app

@@ -17,6 +17,8 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
       initContainers:
         - name: init-data-dir
           image: busybox:1.36
@@ -26,13 +28,14 @@ spec:
             - |
               mkdir -p /app/server/prisma/data && \
               chown -R 1000:1000 /app/server/prisma/data && \
-              chmod 755 /app/server/prisma/data
+              chmod 777 /app/server/prisma/data && \
+              [ ! -f /app/server/prisma/data/dev.db ] || chmod 666 /app/server/prisma/data/dev.db
           volumeMounts:
             - name: todoapp-data
               mountPath: /app/server/prisma/data
       containers:
         - name: todoapp-container
-          image: mokadir/todoapp:15
+          image: mokadir/todoapp:16
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
