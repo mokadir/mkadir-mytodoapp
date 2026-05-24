@@ -28,6 +28,7 @@ app.use(
             objectSrc: ["'none'"],
             mediaSrc: ["'self'"],
             frameSrc: ["'none'"],
+            upgradeInsecureRequests: null, // Disable for HTTP-only deployments (K8s NodePort)
           },
         }
       : false,
