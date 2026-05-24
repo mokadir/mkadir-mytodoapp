@@ -15,8 +15,6 @@ spec:
       labels:
         app: todoapp
     spec:
-      imagePullSecrets:
-        - name: dockerhub-cred
       containers:
         - name: todoapp-container
           image: mokadir/todoapp:4
