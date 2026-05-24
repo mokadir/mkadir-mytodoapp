@@ -16,7 +16,7 @@ app.set("trust proxy", config.isProduction ? 1 : 0);
 // ─── Security Headers (Helmet) ─────────────────────────────────────────────────
 app.use(
   helmet({
-    contentSecurityPolicy: config.isProduction ? undefined : false,
+    contentSecurityPolicy: false, // Disable CSP to allow Vite-bundled scripts
     crossOriginEmbedderPolicy: false,
   })
 );
