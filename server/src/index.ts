@@ -61,11 +61,19 @@ app.use("/api", routes);
 
 // ─── Serve Client Static Files (in production) ────────────────────────────────
 if (config.isProduction) {
+  // __dirname = /app/server/dist, so go up 2 levels to /app, then into client/dist
   const clientDist = path.resolve(__dirname, "..", "..", "client", "dist");
-  app.use(express.static(clientDist));
+  console.log(`Serving static files from: ${clientDist}`);
+  console.log(`__dirname is: ${__dirname}`);
+  console.log(`cwd is: ${process.cwd()}`);
+
+  // Serve static files with explicit index: false to avoid conflicts
+  app.use(express.static(clientDist, { index: false }));
 
   // SPA fallback: serve index.html for all non-API routes
-  app.get("*", (_req, res) => {
+  app.get("*", (req, res, next) => {
+    // Only serve index.html for non-file requests (SPA routing)
+    if (req.path.startsWith("/api/")) return next();
     res.sendFile(path.join(clientDist, "index.html"));
   });
 }
