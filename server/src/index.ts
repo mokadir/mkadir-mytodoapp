@@ -143,17 +143,20 @@ async function runMigrations() {
     console.log("Database migrations completed successfully");
   } catch (error) {
     console.error("Migration failed, attempting db push as fallback:", error);
-    try {
-      execSync(`"${prismaCli}" db push --accept-data-loss`, {
-        cwd: serverRoot,
-        stdio: "inherit",
-        env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
-      });
-      console.log("Database push completed");
-    } catch (pushError) {
-      console.error("Database initialization failed:", pushError);
-      process.exit(1);
-    }
+  }
+
+  // Always run db push to ensure schema is up to date (idempotent operation)
+  try {
+    console.log("Ensuring database schema is up to date...");
+    execSync(`"${prismaCli}" db push --accept-data-loss --skip-generate`, {
+      cwd: serverRoot,
+      stdio: "inherit",
+      env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
+    });
+    console.log("Database schema synchronized successfully");
+  } catch (pushError) {
+    console.error("Database schema sync failed:", pushError);
+    process.exit(1);
   }
 }
 
