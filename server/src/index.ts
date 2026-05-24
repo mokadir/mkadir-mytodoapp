@@ -67,13 +67,23 @@ if (config.isProduction) {
   console.log(`__dirname is: ${__dirname}`);
   console.log(`cwd is: ${process.cwd()}`);
 
-  // Serve static files with explicit index: false to avoid conflicts
-  app.use(express.static(clientDist, { index: false }));
+  // Serve static assets (JS, CSS, images, etc.)
+  app.use("/assets", express.static(path.join(clientDist, "assets"), {
+    maxAge: "1y",
+    immutable: true,
+  }));
 
-  // SPA fallback: serve index.html for all non-API routes
+  // Serve other static files (manifest.json, sw.js, vite.svg, etc.)
+  app.use(express.static(clientDist, {
+    index: false,
+    dotfiles: "allow",
+  }));
+
+  // SPA fallback: serve index.html for all non-API, non-file routes
   app.get("*", (req, res, next) => {
-    // Only serve index.html for non-file requests (SPA routing)
     if (req.path.startsWith("/api/")) return next();
+    // Only serve index.html for routes that look like SPA navigation (no file extension)
+    if (req.path.includes(".")) return next();
     res.sendFile(path.join(clientDist, "index.html"));
   });
 }
