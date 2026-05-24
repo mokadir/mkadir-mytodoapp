@@ -41,15 +41,12 @@ COPY --from=server-build /app/server/prisma ./server/prisma
 # Copy client build
 COPY --from=client-build /app/client/dist ./client/dist
 
-# Create non-root user with fixed UID 1000 (matches hostPath PV ownership)
-# Note: node:22-alpine base image already has 'node' user with UID/GID 1000,
-# so we use GID 1001 for our appgroup to avoid conflict
-RUN addgroup -S -g 1001 appgroup && adduser -S -u 1000 -G appgroup appuser
+# Use the existing 'node' user (UID 1000, GID 1000) from the base image
+# This matches the hostPath PV ownership (jenkins:jenkins, UID/GID 1000)
+# and avoids conflicts with pre-existing users/groups in node:22-alpine
+RUN mkdir -p /app/server/prisma/data && chown -R node:node /app
 
-# Create data directory for SQLite database and set permissions
-RUN mkdir -p /app/server/prisma/data && chown -R appuser:appgroup /app
-
-USER appuser
+USER node
 
 # Environment
 ENV NODE_ENV=production
