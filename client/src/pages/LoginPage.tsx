@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../context/AuthContext";
+import { AuthLayout } from "../components/AuthLayout";
 import { ApiError } from "../lib/api";
 
 type LoginPageProps = {
@@ -34,7 +35,7 @@ export function LoginPage({ onSwitchToRegister, onSuccess }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <AuthLayout>
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 sm:p-8 w-full max-w-md transition-colors duration-200">
 
         <h1 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">Welcome back</h1>
@@ -96,6 +97,6 @@ export function LoginPage({ onSwitchToRegister, onSuccess }: LoginPageProps) {
           </button>
         </p>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
